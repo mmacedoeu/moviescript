@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:task="http://www.springframework.org/schema/task"	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd		
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.3.xsd">
+
+	<!-- GetSettings -->	
+
+	<int:channel id="getSettingsRequest" />
+
+	<bean id="getSettings" class="org.eu.mmacedo.movie.scripts.service.GetSettings" />
+
+	<int:service-activator input-channel="getSettingsRequest"
+		method="apply" output-channel="getSettingsResponse" ref="getSettings">
+	</int:service-activator>	
+	
+	<int:channel id="getSettingsResponse" />
+
+	<int:gateway id="getSettingsGateway" default-request-channel="getSettingsRequest"
+		default-reply-channel="getSettingsResponse"
+		service-interface="java.util.function.Function" />	
+		
+	<!-- GetSetting -->		
+		
+	<int:channel id="getSettingRequest" />
+
+	<bean id="getSetting" class="org.eu.mmacedo.movie.scripts.service.GetSetting" />
+
+	<int:service-activator input-channel="getSettingRequest"
+		method="apply" output-channel="getSettingResponse" ref="getSetting">
+	</int:service-activator>	
+	
+	<int:channel id="getSettingResponse" />
+
+	<int:gateway id="getSettingGateway" default-request-channel="getSettingRequest"
+		default-reply-channel="getSettingResponse"
+		service-interface="java.util.function.Function" />			
+		
+	<!-- GetCharacters -->	
+
+	<int:channel id="getCharactersRequest" />
+
+	<bean id="getCharacters" class="org.eu.mmacedo.movie.scripts.service.GetCharacters" />
+
+	<int:service-activator input-channel="getCharactersRequest"
+		method="apply" output-channel="getCharactersResponse" ref="getCharacters">
+	</int:service-activator>	
+	
+	<int:channel id="getCharactersResponse" />
+
+	<int:gateway id="getCharactersGateway" default-request-channel="getCharactersRequest"
+		default-reply-channel="getCharactersResponse"
+		service-interface="java.util.function.Function" />		
+		
+	<!-- GetCharacter -->	
+
+	<int:channel id="getCharacterRequest" />
+
+	<bean id="getCharacter" class="org.eu.mmacedo.movie.scripts.service.GetCharacter" />
+
+	<int:service-activator input-channel="getCharacterRequest"
+		method="apply" output-channel="getCharacterResponse" ref="getCharacter">
+	</int:service-activator>	
+	
+	<int:channel id="getCharacterResponse" />
+
+	<int:gateway id="getCharacterGateway" default-request-channel="getCharacterRequest"
+		default-reply-channel="getCharacterResponse"
+		service-interface="java.util.function.Function" />			
+			
+		
+
+</beans>

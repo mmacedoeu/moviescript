@@ -1,0 +1,8 @@
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  main:
+    banner-mode: "CONSOLE"

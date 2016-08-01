@@ -1,0 +1,83 @@
+# Movie Script parser 
+
+Implemented with spring boot spring integrations and engineered toward a lambda architecture
+
+Project is maven pom based, so to test just mvn test and to run just mvn spring-boot:run
+
+The processing is divided into multiple modules and layers, making it easy to develop and test in a team greater than just myself.
+That way a TDD approach is feasible. I choose to use separated spring context xml configuration to make it clear the layers and that way it is easier to control and fine tune.
+
+The processing begins splitting the file into chunks of processing per movie setting:
+
+## Setting Splitter (SettingSplitter.java)
+
+Do line breaking processing putting line into a List and extract setting name splitting file into a collection of settings for further processing
+*SettingSplitterTest test for a simple scenario where Setting class is filled with expected content
+
+###Configuration: spring-script-context.xml
+
+## Script Parser (ScriptParser.java)
+
+Do per Movie Setting parsing for Movie Characters and Dialogs, also do word splitting and consolidate per Movie Setting word counts.
+Use a Map index for fast retrieval of Movie Characters and consolidation.
+After Setting Splitter each Setting is dispatched to a task executor in a Thread pool configurable in spring-global-context making it a multi core processing unit.
+*ScriptParserTest test for a simple successful scenario
+*TrimPontuationTest test for getting rid of pontuation in words.
+*BlankPaddedTest for testing some scenarios on blank spaced character names and dialogs for easy parsing
+
+Helper.java : Collection of lambda functions for String processing
+
+### Configuration: spring-script-context.xml, spring-global-context.xml
+
+## Persist Setting (PersistSetting.java)
+
+Save results into relational database and when there is a result update with sum per Setting and per Character.
+As the problem is a process once and read always I have designed a solution to read consume low cpu and scales into high throughput reading.
+It could be faster with a document oriented db like mongodb but for now we are using in memory relational db.
+I have put support for optimist lock using a version column in word table, but time was not enough to further optimize processing in parallel so persisting is configured in a queue with a single thread for now.
+Persisting is taking the bulk of latency here so I imagine to use per node workare for high throughput processing but time was not enough and dropped the idea.
+
+*PersistSettingTest test for a number of possible paths
+*IntegrationTest1 test for a number of possible paths including prior processing units
+
+### Configuration: spring-setting-context.xml
+
+## Get Settings (GetSettings.java)
+
+Do consult on database for all Settings and further serialize into json for delivery
+It is using spring data jta repositories with custom queries and pagination to limit the 10 words and order desc use case 
+
+*GetSettingsTest is testing for simple successful scenario, it uses some of the initial services to make developing test faster so, no mocking, it is a partial integration test
+
+## Get Setting by ID (GetSetting.java)
+
+Almost mirror of GetSettings but for just one Setting Id
+
+*GetSettingTest tests for simple successful scenario
+
+## Get Characters (GetCharacters.java)
+
+Do consult on database for Characters and further serialize into json for delivering
+
+*GetCharactersTest tests for simple successful scenario
+  
+## Get Character (GetCharacter.java)
+
+Almost mirror of GetCharacter but for just one Id
+
+### Configuration: spring-getter-context.xml
+
+## Inbound Endpoints (GetCharacterInbound.java, GetCharactersInbound.java, GetSettingInbound.java, GetSettingsInbound.java, PostScriptInbound.java)
+
+Do http use cases and call corresponding services.
+
+At the time of this writing a found a glitch into spring-boot-RC1 that I choose to use, but I have no time to workaround.
+The Get /characters endpoint is always failing with a nasty bug despite being on eye identical code to other endpoints :(
+
+Observations: Some tests are time and machine performance related and could fail in a slower machine, usually running each test on isolation always pass.
+
+
+
+
+
+

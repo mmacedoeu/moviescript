@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<!-- Splitter -->
+
+	<int:channel id="scriptRequest" />
+
+	<bean id="scriptSplitter" class="org.eu.mmacedo.movie.scripts.splitter.SettingSplitter" />
+
+	<int:splitter input-channel="scriptRequest" method="apply"
+		output-channel="scriptParseRequest" ref="scriptSplitter">
+	</int:splitter>
+
+	<!-- Parser -->
+	<int:channel id="scriptParseRequest">
+		<int:dispatcher task-executor="requestExecutor" />
+	</int:channel>
+	
+	<bean id="scriptParseService" class="org.eu.mmacedo.movie.scripts.service.ScriptParser" />
+	
+	<int:service-activator input-channel="scriptParseRequest"
+		method="apply" output-channel="scriptParseResponse" ref="scriptParseService">
+	</int:service-activator>	
+	
+	<int:channel id="scriptParseResponse" />
+
+
+</beans>		

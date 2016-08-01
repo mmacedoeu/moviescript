@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	    <layout class="ch.qos.logback.classic.PatternLayout">
+		<Pattern>
+			%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+		</Pattern>
+	    </layout>
+	</appender>
+		
+	<logger name="org.hibernate.internal.SessionImpl" level="ERROR" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>	
+	
+	<logger name="org.springframework.http" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>	
+
+	<logger name="org.springframework" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="ch.qos.logback" level="ERROR" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>	
+	
+	<logger name="org.springframework.data" level="ERROR">
+		<appender-ref ref="STDOUT" />
+	</logger>	
+	
+	<logger name="org.springframework.transaction" level="ERROR">
+		<appender-ref ref="STDOUT" />
+	</logger>		
+
+	
+	<logger name="org.springframework.integration.handler.LoggingHandler" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>		
+			
+	<logger name="org.eu.mmacedo.movie.scripts.service" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>			
+				 
+	<root level="error">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

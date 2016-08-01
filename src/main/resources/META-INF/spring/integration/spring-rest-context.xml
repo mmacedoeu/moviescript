@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:task="http://www.springframework.org/schema/task"	
+	xmlns:int-http="http://www.springframework.org/schema/integration/http"	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.3.xsd">
+
+
+		<int:channel id="scriptPOSTRequest" />
+		<int:channel id="scriptPOSTResponse" />
+		
+	<int-http:inbound-gateway id="scriptPOSTRest"
+		supported-methods="POST"
+		request-channel="scriptPOSTRequest"
+		reply-channel="scriptPOSTResponse"
+		mapped-response-headers="HTTP_RESPONSE_HEADERS"
+		request-payload-type="java.lang.String"
+		path="/script"
+		reply-timeout="120000">
+	</int-http:inbound-gateway>		
+	
+		<int:channel id="charactersGETRequest" />
+		<int:channel id="charactersGETResponse" />				
+	
+	<int-http:inbound-gateway id="getCharactersRest"
+		supported-methods="GET"
+		request-channel="charactersGETRequest"
+		reply-channel="charactersGETRequest"
+		mapped-response-headers="HTTP_RESPONSE_HEADERS"
+		path="/characters"
+		reply-timeout="120000">
+	</int-http:inbound-gateway>		
+	
+	
+		<int:channel id="characterGETRequest" />
+		<int:channel id="characterGETResponse" />	
+		
+	<int-http:inbound-gateway id="getCharacterRest"
+		supported-methods="GET"
+		request-channel="characterGETRequest"
+		reply-channel="characterGETResponse"
+		mapped-response-headers="HTTP_RESPONSE_HEADERS"
+		path="/characters/{c}"
+		reply-timeout="120000">
+		<int-http:header name="c" expression="#pathVariables.c" />
+	</int-http:inbound-gateway>		
+	
+		<int:channel id="settingsGETRequest" />
+		<int:channel id="settingsGETResponse" />				
+	
+	<int-http:inbound-gateway id="getSettingsRest"
+		supported-methods="GET"
+		request-channel="settingsGETRequest"
+		reply-channel="settingsGETResponse"
+		mapped-response-headers="HTTP_RESPONSE_HEADERS"
+		path="/settings"
+		reply-timeout="120000">
+	</int-http:inbound-gateway>		
+	
+		<int:channel id="settingGETRequest" />
+		<int:channel id="settingGETResponse" />				
+	
+	<int-http:inbound-gateway id="getSettingRest"
+		supported-methods="GET"
+		request-channel="settingGETRequest"
+		reply-channel="settingGETResponse"
+		mapped-response-headers="HTTP_RESPONSE_HEADERS"		
+		path="/settings/{s}"
+		reply-timeout="120000">
+		<int-http:header name="s" expression="#pathVariables.s" />		
+	</int-http:inbound-gateway>			
+	
+	<int:service-activator id="scriptPOSTService"
+					input-channel="scriptPOSTRequest"
+					output-channel="scriptPOSTResponse"
+					ref="postScriptInbound"
+					method="apply"
+					requires-reply="true"/>	
+	
+	<bean id="postScriptInbound" class="org.eu.mmacedo.movie.scripts.service.rest.PostScriptInbound" />	
+	
+	<int:service-activator id="characterGETService"
+					input-channel="characterGETRequest"
+					output-channel="characterGETResponse"
+					ref="getCharacterInbound"
+					method="apply"
+					requires-reply="true"/>	
+	
+	<bean id="getCharacterInbound" class="org.eu.mmacedo.movie.scripts.service.rest.GetCharacterInbound" />		
+	
+	<int:service-activator id="charactersGETService"
+					input-channel="charactersGETRequest"
+					output-channel="charactersGETResponse"
+					ref="getCharactersInbound"
+					method="apply"
+					requires-reply="true"/>	
+	
+	<bean id="getCharactersInbound" class="org.eu.mmacedo.movie.scripts.service.rest.GetCharactersInbound" />		
+	
+	<int:service-activator id="settingsGETService"
+					input-channel="settingsGETRequest"
+					output-channel="settingsGETResponse"
+					ref="getSettingsInbound"
+					method="apply"
+					requires-reply="true"/>	
+					
+	<bean id="getSettingsInbound" class="org.eu.mmacedo.movie.scripts.service.rest.GetSettingsInbound" />						
+
+	<int:service-activator id="settingGETService"
+					input-channel="settingGETRequest"
+					output-channel="settingGETResponse"
+					ref="getSettingInbound"
+					method="apply"
+					requires-reply="true"/>	
+	
+	<bean id="getSettingInbound" class="org.eu.mmacedo.movie.scripts.service.rest.GetSettingInbound" />	
+
+
+</beans>
